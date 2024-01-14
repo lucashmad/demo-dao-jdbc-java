@@ -10,34 +10,34 @@ public class DB {
     private static Connection connection = null;
 
     // conecta ao banco
-    public static Connection getConnection(){
+    public static Connection getConnection() {
         try {
             Properties properties = loadProperties();
             String url = properties.getProperty("dburl");
             connection = DriverManager.getConnection(url, properties);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
         }
         return connection;
     }
 
     // fecha conecta
-    public static void closeConnection(){
-        if (connection != null){
+    public static void closeConnection() {
+        if (connection != null) {
             try {
                 connection.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 throw new DbException(e.getMessage());
             }
         }
     }
 
     // tratar o statement
-    public static void closeStatement(Statement statement){
-        if (statement != null){
+    public static void closeStatement(Statement statement) {
+        if (statement != null) {
             try {
                 statement.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 throw new DbException(e.getMessage());
             }
         }
@@ -45,27 +45,24 @@ public class DB {
 
     // trata o resultset
 
-    public static void closeResultSet(ResultSet resultSet){
-        if (resultSet != null){
+    public static void closeResultSet(ResultSet resultSet) {
+        if (resultSet != null) {
             try {
                 resultSet.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 throw new DbException(e.getMessage());
             }
         }
     }
 
     // carrega dados
-    private static Properties loadProperties(){
-        try (FileInputStream fileInputStream = new FileInputStream(("db.properties"))){
+    private static Properties loadProperties() {
+        try (FileInputStream fileInputStream = new FileInputStream(("db.properties"))) {
             Properties properties = new Properties();
             properties.load(fileInputStream);
             return properties;
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new DbException(e.getMessage());
         }
     }
-
-
-
-  }
+}
