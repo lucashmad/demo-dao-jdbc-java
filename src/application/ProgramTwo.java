@@ -20,16 +20,16 @@ public class ProgramTwo {
         departmentDao.insert(newDepartment);
         System.out.println("Inserted! New id: " + newDepartment.getId());
 
-        System.out.println("==== TEST 1: DELETE ====");
+        System.out.println("==== TEST 2: DELETE ====");
         System.out.println("Enter id from delete: ");
         int id = scanner.nextInt();
         departmentDao.deleteById(id);
         System.out.println("Deleted completed! ");
 
+        System.out.println("=== Test 3: Seller findById ===");
+        Department department = departmentDao.findById(10);
+        System.out.println(department);
 
-
+        scanner.close();
     }
-
-
-
 }
