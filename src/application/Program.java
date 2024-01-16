@@ -6,6 +6,7 @@ import entities.Department;
 import entities.Seller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -38,5 +39,10 @@ public class Program {
             System.out.println(seller1);
 
         }
+        System.out.println("=== Test 4: Seller Insert ===");
+        Seller newSeller = new Seller(null, "Lucas", "Lucas@gmail.com", new Date(), 3500.00, department);
+        sellerDao.insert(newSeller);
+        System.out.println("Inserted! New id = " + newSeller.getId());
+
     }
 }
