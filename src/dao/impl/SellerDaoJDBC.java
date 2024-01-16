@@ -40,33 +40,33 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public Seller findById(Integer id) {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
 
-        try {
-            preparedStatement = connection.prepareStatement(
-                    "SELECT seller.*,department.Name as DepName "
-                            + "FROM seller INNER JOIN department "
-                            + "ON seller.DepartmentId = department.Id "
-                            + "WHERE seller.Id = ? "
-            );
+            try {
+                preparedStatement = connection.prepareStatement(
+                        "SELECT seller.*,department.Name as DepName "
+                                + "FROM seller INNER JOIN department "
+                                + "ON seller.DepartmentId = department.Id "
+                                + "WHERE seller.Id = ? "
+                );
 
-            preparedStatement.setInt(1, id);
-            resultSet = preparedStatement.executeQuery();
+                preparedStatement.setInt(1, id);
+                resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
-                Department department = instantiateDepartment(resultSet);
-                Seller seller = instantiateSeller(resultSet, department);
-                return seller;
+                if (resultSet.next()) {
+                    Department department = instantiateDepartment(resultSet);
+                    Seller seller = instantiateSeller(resultSet, department);
+                    return seller;
+                }
+                return null;
+
+            } catch (SQLException e) {
+                throw new DbException(e.getMessage());
+            } finally {
+                DB.closeStatement(preparedStatement);
+                DB.closeResultSet(resultSet);
             }
-            return null;
-
-        } catch (SQLException e) {
-            throw new DbException(e.getMessage());
-        } finally {
-            DB.closeStatement(preparedStatement);
-            DB.closeResultSet(resultSet);
-        }
 
     }
 
@@ -90,7 +90,44 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public List<Seller> findAll() {
-        return null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
+
+        Department depOne = new Department();
+        try {
+            statement = connection.prepareStatement(
+                    "SELECT seller.*,department.Name as DepName "
+                            + "FROM seller INNER JOIN department "
+                            + "ON seller.DepartmentId = department.Id "
+                            + "ORDER BY Name "
+            );
+
+            set = statement.executeQuery();
+
+            List<Seller> sellerList = new ArrayList<>();
+            Map<Integer, Department> departmentMap = new HashMap<>(); // estrutura map ora nao repetir
+
+            while (set.next()) {
+
+                Department dep = departmentMap.get(set.getInt("DepartmentId"));
+
+                if (dep == null){
+                    depOne = instantiateDepartment(set);
+                    departmentMap.put(set.getInt("DepartmentId"), depOne);
+                }
+
+
+                Seller seller = instantiateSeller(set, depOne);
+                sellerList.add(seller);
+            }
+            return sellerList;
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeStatement(statement);
+            DB.closeResultSet(set);
+        }
     }
 
     @Override
@@ -111,7 +148,7 @@ public class SellerDaoJDBC implements SellerDao {
             resultSet = preparedStatement.executeQuery();
 
             List<Seller> sellerList = new ArrayList<>();
-            Map<Integer, Department> departmentMap = new HashMap<>();
+            Map<Integer, Department> departmentMap = new HashMap<>(); // estrutura map ora nao repetir
 
             while (resultSet.next()) {
 
